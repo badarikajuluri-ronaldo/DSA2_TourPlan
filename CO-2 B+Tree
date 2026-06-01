@@ -1,0 +1,90 @@
+import java.util.ArrayList;
+
+class BPlusTreeNode {
+    ArrayList<Integer> destinationIds;
+    ArrayList<String> destinations;
+
+    BPlusTreeNode() {
+        destinationIds = new ArrayList<>();
+        destinations = new ArrayList<>();
+    }
+}
+
+class BPlusTree {
+    BPlusTreeNode root;
+
+    BPlusTree() {
+        root = new BPlusTreeNode();
+    }
+
+    // Insert Destination
+    void insert(int destinationId, String placeName) {
+        root.destinationIds.add(destinationId);
+        root.destinations.add(placeName);
+
+        // Sort records
+        for (int i = 0; i < root.destinationIds.size() - 1; i++) {
+            for (int j = i + 1; j < root.destinationIds.size(); j++) {
+
+                if (root.destinationIds.get(i) > root.destinationIds.get(j)) {
+
+                    int tempId = root.destinationIds.get(i);
+                    root.destinationIds.set(i, root.destinationIds.get(j));
+                    root.destinationIds.set(j, tempId);
+
+                    String tempPlace = root.destinations.get(i);
+                    root.destinations.set(i, root.destinations.get(j));
+                    root.destinations.set(j, tempPlace);
+                }
+            }
+        }
+    }
+
+    // Search Destination
+    String search(int destinationId) {
+
+        for (int i = 0; i < root.destinationIds.size(); i++) {
+
+            if (root.destinationIds.get(i) == destinationId) {
+                return root.destinations.get(i);
+            }
+        }
+
+        return "Destination Not Found";
+    }
+
+    // Display All Destinations
+    void display() {
+
+        System.out.println("Tour Destinations:");
+
+        for (int i = 0; i < root.destinationIds.size(); i++) {
+
+            System.out.println(
+                    "Destination ID: "
+                            + root.destinationIds.get(i)
+                            + "  Place: "
+                            + root.destinations.get(i));
+        }
+    }
+}
+
+public class Main {
+
+    public static void main(String[] args) {
+
+        BPlusTree tree = new BPlusTree();
+
+        tree.insert(101, "Goa");
+        tree.insert(105, "Manali");
+        tree.insert(103, "Jaipur");
+        tree.insert(108, "Kerala");
+
+        System.out.println("===== TOURPLAN SYSTEM =====");
+        tree.display();
+
+        System.out.println("\n===== SEARCH DESTINATION =====");
+        System.out.println("Destination ID 103 : "
+                + tree.search(103));
+    }
+}
