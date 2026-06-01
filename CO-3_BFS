@@ -1,0 +1,80 @@
+import java.util.*;
+
+class Graph {
+    private int vertices;
+    private LinkedList<Integer>[] adjList;
+
+    Graph(int v) {
+        vertices = v;
+        adjList = new LinkedList[v];
+
+        for (int i = 0; i < v; i++) {
+            adjList[i] = new LinkedList<Integer>();
+        }
+    }
+
+    // Add travel route
+    void addEdge(int source, int destination) {
+        adjList[source].add(destination);
+        adjList[destination].add(source);
+    }
+
+    // BFS Traversal
+    void BFS(int startNode) {
+
+        boolean visited[] = new boolean[vertices];
+
+        Queue<Integer> queue = new LinkedList<Integer>();
+
+        visited[startNode] = true;
+        queue.add(startNode);
+
+        String places[] = {
+                "Goa",
+                "Jaipur",
+                "Manali",
+                "Kerala",
+                "Ooty",
+                "Mysore"
+        };
+
+        System.out.println("Travel Itinerary BFS Traversal:");
+
+        while (!queue.isEmpty()) {
+
+            int node = queue.poll();
+
+            System.out.print(places[node] + " ");
+
+            Iterator<Integer> i = adjList[node].iterator();
+
+            while (i.hasNext()) {
+
+                int n = i.next();
+
+                if (!visited[n]) {
+                    visited[n] = true;
+                    queue.add(n);
+                }
+            }
+        }
+    }
+}
+
+public class Main {
+
+    public static void main(String[] args) {
+
+        Graph tourPlan = new Graph(6);
+
+        tourPlan.addEdge(0, 1); // Goa - Jaipur
+        tourPlan.addEdge(0, 2); // Goa - Manali
+        tourPlan.addEdge(1, 3); // Jaipur - Kerala
+        tourPlan.addEdge(2, 4); // Manali - Ooty
+        tourPlan.addEdge(3, 5); // Kerala - Mysore
+
+        System.out.println("===== TourPlan Travel Itinerary System =====");
+
+        tourPlan.BFS(0);
+    }
+}
