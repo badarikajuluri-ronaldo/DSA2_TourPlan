@@ -1,0 +1,119 @@
+class Destination {
+    int destinationId;
+    String placeName;
+    int budget;
+    Destination left, right;
+
+    Destination(int destinationId, String placeName, int budget) {
+        this.destinationId = destinationId;
+        this.placeName = placeName;
+        this.budget = budget;
+        left = right = null;
+    }
+}
+
+public class Main {
+
+    static Destination root;
+
+    // Insert Destination
+    static Destination insert(Destination root, int id, String place, int budget) {
+        if (root == null)
+            return new Destination(id, place, budget);
+
+        if (id < root.destinationId)
+            root.left = insert(root.left, id, place, budget);
+        else if (id > root.destinationId)
+            root.right = insert(root.right, id, place, budget);
+
+        return root;
+    }
+
+    // Search Destination
+    static Destination search(Destination root, int id) {
+        if (root == null || root.destinationId == id)
+            return root;
+
+        if (id < root.destinationId)
+            return search(root.left, id);
+
+        return search(root.right, id);
+    }
+
+    // Find Minimum Node
+    static Destination minValue(Destination root) {
+        while (root.left != null)
+            root = root.left;
+        return root;
+    }
+
+    // Delete Destination
+    static Destination delete(Destination root, int id) {
+        if (root == null)
+            return null;
+
+        if (id < root.destinationId)
+            root.left = delete(root.left, id);
+        else if (id > root.destinationId)
+            root.right = delete(root.right, id);
+        else {
+            if (root.left == null)
+                return root.right;
+
+            if (root.right == null)
+                return root.left;
+
+            Destination temp = minValue(root.right);
+
+            root.destinationId = temp.destinationId;
+            root.placeName = temp.placeName;
+            root.budget = temp.budget;
+
+            root.right = delete(root.right, temp.destinationId);
+        }
+        return root;
+    }
+
+    // Inorder Traversal
+    static void inorder(Destination root) {
+        if (root != null) {
+            inorder(root.left);
+
+            System.out.println(
+                "Destination ID: " + root.destinationId +
+                ", Place: " + root.placeName +
+                ", Budget: Rs." + root.budget
+            );
+
+            inorder(root.right);
+        }
+    }
+
+    public static void main(String[] args) {
+
+        root = insert(root, 101, "Goa", 15000);
+        root = insert(root, 105, "Manali", 25000);
+        root = insert(root, 103, "Jaipur", 18000);
+        root = insert(root, 108, "Kerala", 30000);
+
+        System.out.println("===== TOUR DESTINATIONS =====");
+        inorder(root);
+
+        System.out.println("\n===== SEARCH DESTINATION =====");
+        Destination result = search(root, 103);
+
+        if (result != null) {
+            System.out.println("Found Destination:");
+            System.out.println("Place: " + result.placeName);
+            System.out.println("Budget: Rs." + result.budget);
+        } else {
+            System.out.println("Destination Not Found");
+        }
+
+        System.out.println("\n===== DELETE DESTINATION ID 105 =====");
+        root = delete(root, 105);
+
+        System.out.println("\nUpdated Tour Destinations:");
+        inorder(root);
+    }
+}
