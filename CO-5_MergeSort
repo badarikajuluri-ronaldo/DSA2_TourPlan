@@ -1,0 +1,102 @@
+class Destination {
+    String name;
+    double rating;
+    int cost;
+
+    Destination(String name, double rating, int cost) {
+        this.name = name;
+        this.rating = rating;
+        this.cost = cost;
+    }
+}
+
+public class Main {
+
+    public static void merge(Destination[] arr, int left, int mid, int right) {
+
+        int n1 = mid - left + 1;
+        int n2 = right - mid;
+
+        Destination[] L = new Destination[n1];
+        Destination[] R = new Destination[n2];
+
+        for (int i = 0; i < n1; i++)
+            L[i] = arr[left + i];
+
+        for (int j = 0; j < n2; j++)
+            R[j] = arr[mid + 1 + j];
+
+        int i = 0, j = 0;
+        int k = left;
+
+        while (i < n1 && j < n2) {
+
+            if (L[i].rating >= R[j].rating) {
+                arr[k] = L[i];
+                i++;
+            } else {
+                arr[k] = R[j];
+                j++;
+            }
+            k++;
+        }
+
+        while (i < n1) {
+            arr[k] = L[i];
+            i++;
+            k++;
+        }
+
+        while (j < n2) {
+            arr[k] = R[j];
+            j++;
+            k++;
+        }
+    }
+
+    public static void mergeSort(Destination[] arr, int left, int right) {
+
+        if (left < right) {
+
+            int mid = left + (right - left) / 2;
+
+            mergeSort(arr, left, mid);
+            mergeSort(arr, mid + 1, right);
+
+            merge(arr, left, mid, right);
+        }
+    }
+
+    public static void display(Destination[] destinations) {
+
+        System.out.println("\n===== SMART TOURISM ITINERARY =====");
+        System.out.println("------------------------------------");
+        System.out.printf("%-20s %-10s %-10s\n",
+                "Destination", "Rating", "Cost");
+
+        for (Destination d : destinations) {
+            System.out.printf("%-20s %-10.1f ₹%-10d\n",
+                    d.name, d.rating, d.cost);
+        }
+    }
+
+    public static void main(String[] args) {
+
+        Destination[] destinations = {
+                new Destination("Beach", 4.5, 1500),
+                new Destination("Museum", 4.8, 1200),
+                new Destination("Temple", 4.2, 800),
+                new Destination("Water Park", 4.7, 1800),
+                new Destination("Hill Station", 4.9, 2500),
+                new Destination("Zoo", 4.3, 1000)
+        };
+
+        System.out.println("Before Sorting:");
+        display(destinations);
+
+        mergeSort(destinations, 0, destinations.length - 1);
+
+        System.out.println("\nAfter Sorting by Rating (Highest to Lowest):");
+        display(destinations);
+    }
+}
