@@ -1,0 +1,117 @@
+import java.util.*;
+
+class Edge {
+    int destination;
+    int distance;
+
+    Edge(int destination, int distance) {
+        this.destination = destination;
+        this.distance = distance;
+    }
+}
+
+class Node implements Comparable<Node> {
+    int vertex;
+    int distance;
+
+    Node(int vertex, int distance) {
+        this.vertex = vertex;
+        this.distance = distance;
+    }
+
+    public int compareTo(Node other) {
+        return Integer.compare(this.distance, other.distance);
+    }
+}
+
+public class Main {
+
+    static class Graph {
+        private int vertices;
+        private List<List<Edge>> adjacencyList;
+
+        Graph(int vertices) {
+            this.vertices = vertices;
+            adjacencyList = new ArrayList<>();
+
+            for (int i = 0; i < vertices; i++) {
+                adjacencyList.add(new ArrayList<>());
+            }
+        }
+
+        void addEdge(int source, int destination, int distance) {
+            adjacencyList.get(source).add(new Edge(destination, distance));
+            adjacencyList.get(destination).add(new Edge(source, distance));
+        }
+
+        void dijkstra(int source, String[] places) {
+
+            int[] shortestDistance = new int[vertices];
+            Arrays.fill(shortestDistance, Integer.MAX_VALUE);
+
+            PriorityQueue<Node> pq = new PriorityQueue<>();
+
+            shortestDistance[source] = 0;
+            pq.add(new Node(source, 0));
+
+            while (!pq.isEmpty()) {
+
+                Node current = pq.poll();
+                int currentVertex = current.vertex;
+
+                for (Edge edge : adjacencyList.get(currentVertex)) {
+
+                    int newDistance =
+                            shortestDistance[currentVertex] + edge.distance;
+
+                    if (newDistance < shortestDistance[edge.destination]) {
+
+                        shortestDistance[edge.destination] = newDistance;
+
+                        pq.add(new Node(
+                                edge.destination,
+                                shortestDistance[edge.destination]
+                        ));
+                    }
+                }
+            }
+
+            System.out.println("\n===== TOURPLAN SMART ITINERARY =====");
+            System.out.println("Starting Location: " + places[source]);
+            System.out.println("-----------------------------------");
+
+            for (int i = 0; i < vertices; i++) {
+                System.out.println(
+                        places[source] + " -> " +
+                        places[i] + " = " +
+                        shortestDistance[i] + " km"
+                );
+            }
+        }
+    }
+
+    public static void main(String[] args) {
+
+        String[] places = {
+                "Hotel",
+                "Beach",
+                "Museum",
+                "Park",
+                "Temple",
+                "Shopping Mall"
+        };
+
+        Graph tourismGraph = new Graph(6);
+
+        tourismGraph.addEdge(0, 1, 10); // Hotel -> Beach
+        tourismGraph.addEdge(0, 2, 15); // Hotel -> Museum
+        tourismGraph.addEdge(1, 3, 12); // Beach -> Park
+        tourismGraph.addEdge(1, 5, 20); // Beach -> Mall
+        tourismGraph.addEdge(2, 3, 10); // Museum -> Park
+        tourismGraph.addEdge(2, 4, 5);  // Museum -> Temple
+        tourismGraph.addEdge(3, 5, 8);  // Park -> Mall
+        tourismGraph.addEdge(4, 5, 7);  // Temple -> Mall
+
+        tourismGraph.dijkstra(0, places);
+    }
+}
