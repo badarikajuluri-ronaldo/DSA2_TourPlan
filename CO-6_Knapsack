@@ -1,0 +1,57 @@
+public class Main {
+
+    public static void main(String[] args) {
+
+        String[] destinations = {
+                "Beach",
+                "Museum",
+                "Hill Station",
+                "Water Park",
+                "Temple"
+        };
+
+        int[] cost = {1500, 1200, 2500, 1800, 800};
+        int[] satisfaction = {8, 7, 10, 9, 5};
+
+        int budget = 4000;
+        int n = destinations.length;
+
+        int[][] dp = new int[n + 1][budget + 1];
+
+        for (int i = 1; i <= n; i++) {
+            for (int w = 0; w <= budget; w++) {
+
+                if (cost[i - 1] <= w) {
+                    dp[i][w] = Math.max(
+                            satisfaction[i - 1] + dp[i - 1][w - cost[i - 1]],
+                            dp[i - 1][w]
+                    );
+                } else {
+                    dp[i][w] = dp[i - 1][w];
+                }
+            }
+        }
+
+        System.out.println("===== TOURPLAN ITINERARY OPTIMIZATION =====");
+        System.out.println("Budget: ₹" + budget);
+        System.out.println("Maximum Satisfaction Score: " + dp[n][budget]);
+
+        System.out.println("\nSelected Destinations:");
+
+        int w = budget;
+
+        for (int i = n; i > 0 && w > 0; i--) {
+
+            if (dp[i][w] != dp[i - 1][w]) {
+
+                System.out.println(
+                        destinations[i - 1] +
+                        " (Cost: ₹" + cost[i - 1] +
+                        ", Satisfaction: " + satisfaction[i - 1] + ")"
+                );
+
+                w -= cost[i - 1];
+            }
+        }
+    }
+}
